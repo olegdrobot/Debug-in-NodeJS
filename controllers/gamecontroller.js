@@ -1,7 +1,18 @@
 var router = require('express').Router();
-var Game = require('../db').import('../models/game');
+const express = require('express');
+//var Game = require('../db').import('../models/game');
+var Game = require('../models/game');
+const bodyParser = require('body-parser');
+router.use(bodyParser.json());
+router.use(express.json());
+
+//const jsonParser = express.json(); //добавил
 
 router.get('/all', (req, res) => {
+   /* console.log("it's game/all");
+    res.json({message: "hello"});
+    */
+
     Game.findAll({ where: { owner_id: req.user.id } })
         .then(
             function findSuccess(data) {
@@ -17,6 +28,7 @@ router.get('/all', (req, res) => {
                 })
             }
         )
+
 })
 
 router.get('/:id', (req, res) => {
@@ -36,7 +48,11 @@ router.get('/:id', (req, res) => {
         )
 })
 
-router.post('/create', (req, res) => {
+router.route('/create', express.json()).post(async (req, res) => {
+    console.log('create ',req.body);
+    res.send({ansServer: 'server'});
+    
+/*
     Game.create({
         title: req.body.game.title,
         owner_id: req.body.user.id,
@@ -57,6 +73,7 @@ router.post('/create', (req, res) => {
                 res.status(500).send(err.message)
             }
         )
+*/
 })
 
 router.put('/update/:id', (req, res) => {
@@ -113,4 +130,5 @@ router.delete('/remove/:id', (req, res) => {
     )
 })
 
-module.exports = routers;
+//module.exports = routers;
+module.exports = router;
