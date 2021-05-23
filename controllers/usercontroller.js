@@ -1,10 +1,9 @@
+const router = require('express').Router();
 const Sequelize = require('sequelize');
-var router = require('express').Router();
-var bcrypt = require('bcrypt');
-var jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const {User} = require('../db'); //var User = require('../models/user');
 
-var {User} = require('../db');
-//var User = require('../models/user');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -12,9 +11,7 @@ router.use(bodyParser.json());
 router.use(express.json());
 
 
-router.post('/signup', (req, res) => {
-    console.log('user sign up ', req.body.user);
-    
+router.post('/signup', (req, res) => {    
    User.create({
         full_name: req.body.user.full_name,
         username: req.body.user.username,
@@ -23,7 +20,6 @@ router.post('/signup', (req, res) => {
     })
         .then(
             function signupSuccess(users) {
-                console.log('hello');
                 let token = jwt.sign({ id: users.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
                 res.status(200).json({
                     user: users,
@@ -43,20 +39,17 @@ router.post('/signin', (req, res) => {
         if (user) {
             bcrypt.compare(req.body.user.password, user.passwordHash, function (err, matches) {
                 if (matches) {
-                    console.log('user ', user);
-                    var token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
+                    let token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
                     res.json({
                         user: user,
                         message: "Successfully authenticated.",
                         sessionToken: token
                     });
                 } else {
-                    console.log('Passwords do not match. ');
                     res.status(404).send({ error: "Passwords do not match." }) //502 was chanched on 404
                 }
             });
         } else {
-            console.log('User not found. ');
             res.status(401).send({ error: "User not found." })//403 was chanched on 401
         }
 

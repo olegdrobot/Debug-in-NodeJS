@@ -1,8 +1,6 @@
-
-const Sequelize = require('sequelize');
+const router = require('express').Router();
 const {Game} = require('../db');
-
-var router = require('express').Router();
+const Sequelize = require('sequelize');
 const express = require('express');
 //var Game = require('../db').import('../models/game');
 //var Game = require('../models/game');
@@ -13,17 +11,11 @@ router.use(express.json());
 //const jsonParser = express.json(); //добавил
 
 router.get('/all', (req, res) => {
-   /* console.log("it's game/all");
-    res.json({message: "hello"});
-    */
- // Game.findAll({ where: { owner_id: req.user.id } }) - было
-    Game.findAll()
+    Game.findAll() // Game.findAll({ where: { owner_id: req.user.id } }) - было
         .then(
             function findSuccess(data) {
-                console.log('data ', data[0].dataValues);
-                res.status(200).json({
-                   // games: games,
-                    games: data[0].dataValues,
+                res.status(200).json({ 
+                    games: data[0].dataValues,// games: games,
                     message: "Data fetched."
                 })
             },
@@ -55,10 +47,6 @@ router.get('/:id', (req, res) => {
 })
 
 router.route('/create').post(async (req, res) => {
-    console.log('create ',req.body);
-    //console.log(Game);
-    //res.send({ansServer: 'server'});
-   
     await Game.create({
         title: req.body.game.title,
         owner_id: req.body.user.id,
@@ -69,7 +57,6 @@ router.route('/create').post(async (req, res) => {
     })
         .then(
             function createSuccess(games) {
-                console.log('Game created');
                 res.status(201).json({          //200 was chanched on 201
                     game: games,
                     message: "Game created."
@@ -84,7 +71,6 @@ router.route('/create').post(async (req, res) => {
 })
 
 router.put('/update/:id', (req, res) => {
-    console.log('put ', req.params.id, req.body.game.owner_id);
     Game.update({
         title: req.body.game.title,
         studio: req.body.game.studio,
@@ -95,8 +81,7 @@ router.put('/update/:id', (req, res) => {
         {
             where: {
                 id: req.params.id,
-                /*owner_id: req.user*/
-                owner_id: req.body.game.owner_id
+                owner_id: req.body.game.owner_id /*owner_id: req.user*/
             }
         })
         .then(
@@ -120,8 +105,7 @@ router.delete('/remove/:id', (req, res) => {
     Game.destroy({
         where: {
             id: req.params.id,
-            /*owner_id: req.user.id*/
-            owner_id: req.body.game.owner_id
+            owner_id: req.body.game.owner_id /*owner_id: req.user.id*/
         }
     })
     .then(
@@ -140,5 +124,5 @@ router.delete('/remove/:id', (req, res) => {
     )
 })
 
-//module.exports = routers;
-module.exports = router;
+
+module.exports = router; //module.exports = routers;
