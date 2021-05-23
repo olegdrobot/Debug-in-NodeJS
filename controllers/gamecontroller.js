@@ -1,7 +1,11 @@
+
+const Sequelize = require('sequelize');
+const {Game} = require('../db');
+
 var router = require('express').Router();
 const express = require('express');
 //var Game = require('../db').import('../models/game');
-var Game = require('../models/game');
+//var Game = require('../models/game');
 const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 router.use(express.json());
@@ -12,12 +16,14 @@ router.get('/all', (req, res) => {
    /* console.log("it's game/all");
     res.json({message: "hello"});
     */
-
-    Game.findAll({ where: { owner_id: req.user.id } })
+ // Game.findAll({ where: { owner_id: req.user.id } }) - было
+    Game.findAll()
         .then(
             function findSuccess(data) {
+                console.log('data ', data[0].dataValues);
                 res.status(200).json({
-                    games: games,
+                   // games: games,
+                    games: data[0].dataValues,
                     message: "Data fetched."
                 })
             },
@@ -32,7 +38,7 @@ router.get('/all', (req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-    Game.findOne({ where: { id: req.params.id, owner_id: req.user.id } })
+    Game.findOne({ where: { id: req.params.id /*, owner_id: req.user.id */} })
         .then(
             function findSuccess(game) {
                 res.status(200).json({
@@ -48,12 +54,12 @@ router.get('/:id', (req, res) => {
         )
 })
 
-router.route('/create', express.json()).post(async (req, res) => {
+router.route('/create').post(async (req, res) => {
     console.log('create ',req.body);
-    res.send({ansServer: 'server'});
-    
-/*
-    Game.create({
+    //console.log(Game);
+    //res.send({ansServer: 'server'});
+   
+    await Game.create({
         title: req.body.game.title,
         owner_id: req.body.user.id,
         studio: req.body.game.studio,
@@ -62,9 +68,10 @@ router.route('/create', express.json()).post(async (req, res) => {
         have_played: req.body.game.have_played
     })
         .then(
-            function createSuccess(game) {
+            function createSuccess(games) {
+                console.log('Game created');
                 res.status(200).json({
-                    game: game,
+                    game: games,
                     message: "Game created."
                 })
             },
@@ -73,10 +80,11 @@ router.route('/create', express.json()).post(async (req, res) => {
                 res.status(500).send(err.message)
             }
         )
-*/
+    
 })
 
 router.put('/update/:id', (req, res) => {
+    console.log('put ', req.params.id, req.body.game.owner_id);
     Game.update({
         title: req.body.game.title,
         studio: req.body.game.studio,
@@ -87,7 +95,8 @@ router.put('/update/:id', (req, res) => {
         {
             where: {
                 id: req.params.id,
-                owner_id: req.user
+                /*owner_id: req.user*/
+                owner_id: req.body.game.owner_id
             }
         })
         .then(
@@ -111,7 +120,8 @@ router.delete('/remove/:id', (req, res) => {
     Game.destroy({
         where: {
             id: req.params.id,
-            owner_id: req.user.id
+            /*owner_id: req.user.id*/
+            owner_id: req.body.game.owner_id
         }
     })
     .then(

@@ -8,7 +8,7 @@ var game = require('./controllers/gamecontroller')
 app.use('/api/game', game);
 app.use(require('body-parser'));
 app.use(express.json());
-db.sync({force: true});
+//db.sync({force: true});
 app.use(require('./middleware/validate-session'));
 app.use('/api/auth', user);
 /*

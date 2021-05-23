@@ -5,7 +5,14 @@ var jwt = require('jsonwebtoken');
 //var User = require('../db').import('../models/user');
 var User = require('../models/user');
 
+const express = require('express');
+const bodyParser = require('body-parser');
+router.use(bodyParser.json());
+router.use(express.json());
+
+
 router.post('/signup', (req, res) => {
+    console.log('user sign up ', req.body);
     User.create({
         full_name: req.body.user.full_name,
         username: req.body.user.username,
