@@ -52,12 +52,12 @@ router.post('/signin', (req, res) => {
                     });
                 } else {
                     console.log('Passwords do not match. ');
-                    res.status(502).send({ error: "Passwords do not match." })
+                    res.status(404).send({ error: "Passwords do not match." }) //502 was chanched on 404
                 }
             });
         } else {
             console.log('User not found. ');
-            res.status(403).send({ error: "User not found." })
+            res.status(401).send({ error: "User not found." })//403 was chanched on 401
         }
 
     })

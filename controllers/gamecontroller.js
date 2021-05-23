@@ -29,7 +29,7 @@ router.get('/all', (req, res) => {
             },
 
             function findFail() {
-                res.status(500).json({
+                res.status(404).json({          //500 was chanched on 404
                     message: "Data not found"
                 })
             }
@@ -47,7 +47,7 @@ router.get('/:id', (req, res) => {
             },
 
             function findFail(err) {
-                res.status(500).json({
+                res.status(404).json({          //500 was chanched on 404
                     message: "Data not found."
                 })
             }
@@ -70,7 +70,7 @@ router.route('/create').post(async (req, res) => {
         .then(
             function createSuccess(games) {
                 console.log('Game created');
-                res.status(200).json({
+                res.status(201).json({          //200 was chanched on 201
                     game: games,
                     message: "Game created."
                 })
